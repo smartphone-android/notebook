@@ -7,6 +7,17 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- 名称编辑器 -->
+        <EditText
+            android:id="@+id/note_name"
+            android:hint="@string/name_hint"
+            android:padding="10dp"
+            android:textColor="@android:color/black"
+            android:background="#fefefe"
+            android:visibility="visible"
+            android:layout_height="40dp"
+            android:layout_width="match_parent"/>
+
         <!-- 日期和切换按钮 -->
         <LinearLayout
             android:id="@+id/top_bar"
@@ -47,6 +58,7 @@
             android:layout_weight="1">
 
             <!-- 编辑模式 -->
+
             <EditText
                 android:id="@+id/note_content"
                 android:layout_width="match_parent"

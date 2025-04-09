@@ -25,4 +25,6 @@
     <string name="update_failed_message">The modification failed</string>
     <string name="save_failed_message">Save failed</string>
     <string name="note_saved_message">Save successfully</string>
+    <string name="name_hint">Note Name</string>
+    <string name="search_desc">Search</string>
 </resources>

@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +26,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table "+DBUtils.DATABASE_TABLE+"("+DBUtils.NOTEPAD_ID+
                 " integer primary key autoincrement,"+ DBUtils.NOTEPAD_CONTENT +
-                " text," + DBUtils.NOTEPAD_TIME+ " text)");
+                " text," + DBUtils.NOTEPAD_NAME+ " text," + DBUtils.NOTEPAD_TIME+ " text)");
     }
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
     //添加数据
-    public boolean insertData(String userContent,String userTime){
+    public boolean insertData(String noteContent,String noteName,String noteTime){
         ContentValues contentValues=new ContentValues();
-        contentValues.put(DBUtils.NOTEPAD_CONTENT,userContent);
-        contentValues.put(DBUtils.NOTEPAD_TIME,userTime);
+        contentValues.put(DBUtils.NOTEPAD_CONTENT,noteContent);
+        contentValues.put(DBUtils.NOTEPAD_NAME,noteName);
+        contentValues.put(DBUtils.NOTEPAD_TIME,noteTime);
         return
                 sqLiteDatabase.insert(DBUtils.DATABASE_TABLE,null,contentValues)>0;
     }
@@ -45,37 +47,46 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                 sqLiteDatabase.delete(DBUtils.DATABASE_TABLE,sql,contentValuesArray)>0;
     }
     //修改数据
-    public boolean updateData(String id,String content,String userYear){
+    public boolean updateData(String id,String content,String name,String time){
         ContentValues contentValues=new ContentValues();
         contentValues.put(DBUtils.NOTEPAD_CONTENT,content);
-        contentValues.put(DBUtils.NOTEPAD_TIME,userYear);
+        contentValues.put(DBUtils.NOTEPAD_NAME,name);
+        contentValues.put(DBUtils.NOTEPAD_TIME,time);
         String sql=DBUtils.NOTEPAD_ID+"=?";
         String[] strings=new String[]{id};
         return
                 sqLiteDatabase.update(DBUtils.DATABASE_TABLE,contentValues,sql,strings)>0;
     }
     //查询数据
-    public List<NotepadBean> query(){//将遍历的数据存放在一个List<NotepadBean>类型的合集中
-        List<NotepadBean> list=new ArrayList<NotepadBean>();
-//        通过query()方法查询数据库表中的所有数据，并返回一个Cursor对象
-        Cursor cursor=sqLiteDatabase.query(DBUtils.DATABASE_TABLE,null,null,null,
-                null,null,DBUtils.NOTEPAD_ID+" desc");
-        if (cursor!=null){
-            while (cursor.moveToNext()){//通过while循环遍历Cursor对象中的数据
-                NotepadBean noteInfo=new NotepadBean();
-                @SuppressLint("Range") String id = String.valueOf(cursor.getInt
-                        (cursor.getColumnIndex(DBUtils.NOTEPAD_ID)));
-                @SuppressLint("Range") String content = cursor.getString(cursor.getColumnIndex
-                        (DBUtils.NOTEPAD_CONTENT));
-                @SuppressLint("Range") String time = cursor.getString(cursor.getColumnIndex
-                        (DBUtils.NOTEPAD_TIME));
-                noteInfo.setId(id);
-                noteInfo.setNotepadContent(content);
-                noteInfo.setNotepadTime(time);
-                list.add(noteInfo);
+    public List<NotepadBean> query() {
+        List<NotepadBean> list = new ArrayList<>();
+        Cursor cursor = sqLiteDatabase.query(DBUtils.DATABASE_TABLE, null, null, null,
+                null, null, DBUtils.NOTEPAD_ID + " DESC");
+
+        if (cursor != null) {
+            try {
+                int idIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_ID);
+                int contentIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_CONTENT);
+                int nameIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_NAME);
+                int timeIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_TIME);
+
+                while (cursor.moveToNext()) {
+                    NotepadBean noteInfo = new NotepadBean();
+                    noteInfo.setId(String.valueOf(cursor.getInt(idIndex)));
+                    noteInfo.setNotepadContent(cursor.getString(contentIndex));
+                    noteInfo.setNotepadName(cursor.getString(nameIndex));
+                    noteInfo.setNotepadTime(cursor.getString(timeIndex));
+                    list.add(noteInfo);
+                }
+            } catch (IllegalArgumentException e) {
+                Log.e("SQLiteHelper", "Column name not found in Cursor: " + e.getMessage());
+            } finally {
+                cursor.close(); // 确保 Cursor 在使用完毕后关闭，避免内存泄漏
             }
-            cursor.close();
+        } else {
+            Log.d("SQLiteHelper", "Query returned null Cursor.");
         }
         return list;
     }
+
 }

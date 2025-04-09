@@ -13,11 +13,11 @@ public class EditorViewModel extends ViewModel {
         this.id = noteId;
     }
 
-    public boolean saveNote(String content) {
+    public boolean saveNote(String content, String name) {
         if (id != null) {
-            return mSQLiteHelper.updateData(id, content, DBUtils.getTime());
+            return mSQLiteHelper.updateData(id, content, name, DBUtils.getTime());
         } else {
-            return mSQLiteHelper.insertData(content, DBUtils.getTime());
+            return mSQLiteHelper.insertData(content, name, DBUtils.getTime());
         }
     }
 

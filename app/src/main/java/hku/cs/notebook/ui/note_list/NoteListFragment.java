@@ -60,6 +60,7 @@ public class NoteListFragment extends Fragment {
             Bundle bundle = new Bundle();
             bundle.putString("id", notepadBean.getId());
             bundle.putString("time", notepadBean.getNotepadTime());
+            bundle.putString("name", notepadBean.getNotepadName());
             bundle.putString("content", notepadBean.getNotepadContent());
             Navigation.findNavController(v).navigate(R.id.action_noteListFragment_to_editorFragment, bundle);
         });

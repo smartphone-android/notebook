@@ -25,6 +25,8 @@ import hku.cs.notebook.database.SQLiteHelper;
 public class EditorFragment extends Fragment implements View.OnClickListener {
     private TextView noteTime;
     private EditText content; // Markdown 编辑器
+
+    private EditText notename;
     private TextView mdPreview; // Markdown 预览文本
     private ScrollView previewContainer; // 预览容器
     private Button btnCodeMode;
@@ -50,6 +52,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
         // 初始化控件
         noteTime = view.findViewById(R.id.tv_time);
         content = view.findViewById(R.id.note_content);
+        notename = view.findViewById(R.id.note_name);
         mdPreview = view.findViewById(R.id.md_preview);
         previewContainer = view.findViewById(R.id.md_preview_container);
         btnCodeMode = view.findViewById(R.id.btn_code_mode);
@@ -82,6 +85,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
     private void initData() {
         if (viewModel.hasId()) {
             content.setText(requireArguments().getString("content"));
+            notename.setText(requireArguments().getString("name"));
             noteTime.setText(requireArguments().getString("time"));
             noteTime.setVisibility(View.VISIBLE);
         } else {
@@ -106,13 +110,18 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
 
     private void saveContent() {
         String noteContent = content.getText().toString().trim();
+        String noteName = notename.getText().toString().trim();
 
         if (noteContent.isEmpty()) {
             showToast(getString(R.string.empty_content_message)); // 使用资源中的消息
             return;
         }
 
-        boolean success = viewModel.saveNote(noteContent);
+        if (noteName.isEmpty()){
+            noteName = noteContent.length() > 10 ? noteContent.substring(0, 10) : noteContent;
+        }
+
+        boolean success = viewModel.saveNote(noteContent, noteName);
         if (success) {
             showToast(viewModel.hasId() ? getString(R.string.note_updated_message) : getString(R.string.note_saved_message));
             Navigation.findNavController(requireView()).navigateUp(); // 返回到列表页面

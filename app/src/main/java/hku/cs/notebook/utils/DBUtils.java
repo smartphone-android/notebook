@@ -9,6 +9,7 @@ public class DBUtils {
     //数据库表中的列名
     public static final String NOTEPAD_ID = "id";
     public static final String NOTEPAD_CONTENT = "content";
+    public static final String NOTEPAD_NAME = "notename";
     public static final String NOTEPAD_TIME = "notetime";
     //获取当前日期
     public static final String getTime(){

@@ -2,6 +2,7 @@ package hku.cs.notebook.bean;
 
 public class NotepadBean {
     private String id;
+    private String notepadName;
     private String notepadContent;
     private String notepadTime;
     public String getId() {
@@ -9,6 +10,12 @@ public class NotepadBean {
     }
     public void setId(String id) {
         this.id = id;
+    }
+    public String getNotepadName() {
+        return notepadName;
+    }
+    public void setNotepadName(String notepadName) {
+        this.notepadName = notepadName;
     }
     public String getNotepadContent() {
         return notepadContent;

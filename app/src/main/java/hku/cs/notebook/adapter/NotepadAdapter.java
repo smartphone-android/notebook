@@ -53,18 +53,19 @@ public class NotepadAdapter extends BaseAdapter {
         }
 
         NotepadBean noteInfo = getItem(position);
-        viewHolder.tvNotepadContent.setText(noteInfo.getNotepadContent());
+        viewHolder.tvNotepadName.setText(noteInfo.getNotepadName());
+//        viewHolder.tvNotepadContent.setText(noteInfo.getNotepadContent());
         viewHolder.tvNotepadTime.setText(noteInfo.getNotepadTime());
 
         return convertView;
     }
 
     static class ViewHolder {
-        TextView tvNotepadContent;
+        TextView tvNotepadName;
         TextView tvNotepadTime;
 
         public ViewHolder(View view) {
-            tvNotepadContent = view.findViewById(R.id.item_content);
+            tvNotepadName = view.findViewById(R.id.item_name);
             tvNotepadTime = view.findViewById(R.id.item_time);
         }
     }
