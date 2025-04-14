@@ -16,6 +16,8 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import hku.cs.notebook.MainActivity;
 import hku.cs.notebook.R;
+import hku.cs.notebook.bean.UserBean;
+import hku.cs.notebook.database.SQLiteHelper;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -25,11 +27,15 @@ public class LoginActivity extends AppCompatActivity {
     Button login, signUp, reg_register;
     TextInputLayout txtInLayoutUsername, txtInLayoutPassword, txtInLayoutRegPassword;
     CheckBox rememberMe;
+    
+    private SQLiteHelper sqLiteHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_main);
+        
+        sqLiteHelper = new SQLiteHelper(this);
 
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
@@ -71,6 +77,15 @@ public class LoginActivity extends AppCompatActivity {
                     txtInLayoutUsername.setError("Username should not be empty");
                 } else {
                     //Here you can write the codes for checking username
+                    if (!isValidUsername(username.getText().toString().trim())) {
+                        isValid = false;
+                        Snackbar snackbar = Snackbar.make(view, "Invalid username",
+                                Snackbar.LENGTH_LONG);
+                        View snackbarView = snackbar.getView();
+                        snackbarView.setBackgroundColor(getResources().getColor(R.color.red));
+                        snackbar.show();
+                        txtInLayoutUsername.setError("Invalid username: 3-20 characters, only letters, numbers and underscores");
+                    }
                 }
                 if (password.getText().toString().trim().isEmpty()) {
                     isValid = false;
@@ -91,16 +106,30 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if(isValid) {
-                    //Here you can write the codes for checking login
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-
+                    // 验证用户登录
+                    String inputUsername = username.getText().toString().trim();
+                    String inputPassword = password.getText().toString().trim();
+                    
+                    UserBean userBean = sqLiteHelper.verifyUser(inputUsername, inputPassword);
+                    if (userBean != null) {
+                        // 登录成功
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        // 可以将用户信息传递给MainActivity
+                        intent.putExtra("userId", userBean.getUserId());
+                        intent.putExtra("username", userBean.getUsername());
+                        setResult(RESULT_OK, intent);
+                        finish(); // 结束登录活动
+                    } else {
+                        // 登录失败
+                        Snackbar snackbar = Snackbar.make(view, "Invalid username or password",
+                                Snackbar.LENGTH_LONG);
+                        View snackbarView = snackbar.getView();
+                        snackbarView.setBackgroundColor(getResources().getColor(R.color.red));
+                        snackbar.show();
+                    }
                 }
-
             }
-
         });
-
     }
 
     //The method for opening the registration page and another processes or checks for registering
@@ -130,14 +159,22 @@ public class LoginActivity extends AppCompatActivity {
                     isValid = false;
                     reg_username.setError("Please fill out this field");
                 } else {
-                    //Here you can write the codes for checking username
+                    // 检查用户名是否已存在
+                    UserBean existingUser = sqLiteHelper.queryUserByUsername(reg_username.getText().toString().trim());
+                    if (existingUser != null) {
+                        isValid = false;
+                        reg_username.setError("Username already exists");
+                    } else if (!isValidUsername(reg_username.getText().toString().trim())) {
+                        isValid = false;
+                        reg_username.setError("Invalid username: 3-20 characters, only letters, numbers and underscores");
+                    }
                 }
                 if (reg_password.getText().toString().trim().isEmpty()) {
                     isValid = false;
-                    txtInLayoutRegPassword.setPasswordVisibilityToggleEnabled(false);
+                    txtInLayoutRegPassword.setPasswordVisibilityToggleEnabled(true);
                     reg_password.setError("Please fill out this field");
                 } else {
-                    txtInLayoutRegPassword.setPasswordVisibilityToggleEnabled(true);
+                    txtInLayoutRegPassword.setPasswordVisibilityToggleEnabled(false);
                     //Here you can write the codes for checking password
                 }
                 if (reg_firstName.getText().toString().trim().isEmpty()) {
@@ -162,11 +199,38 @@ public class LoginActivity extends AppCompatActivity {
                 if (reg_confirmemail.getText().toString().trim().isEmpty()) {
                     isValid = false;
                     reg_confirmemail.setError("Please fill out this field");
+                } else if (!reg_email.getText().toString().trim().equals(reg_confirmemail.getText().toString().trim())) {
+                    isValid = false;
+                    reg_confirmemail.setError("Email does not match");
                 } else {
                     //Here you can write the codes for checking confirmemail
                 }
                 if(isValid) {
-                    alertDialog.dismiss(); // 使用 alertDialog 而不是 dialog
+                    // 注册新用户
+                    String newUsername = reg_username.getText().toString().trim();
+                    String newPassword = reg_password.getText().toString().trim();
+                    String firstName = reg_firstName.getText().toString().trim();
+                    String lastName = reg_lastName.getText().toString().trim();
+                    String email = reg_email.getText().toString().trim();
+                    
+                    boolean success = sqLiteHelper.insertUser(newUsername, newPassword, firstName, lastName, email);
+                    
+                    if (success) {
+                        // 注册成功
+                        Snackbar snackbar = Snackbar.make(view, "Registration successful",
+                                Snackbar.LENGTH_LONG);
+                        View snackbarView = snackbar.getView();
+                        snackbarView.setBackgroundColor(getResources().getColor(R.color.green));
+                        snackbar.show();
+                        alertDialog.dismiss();
+                    } else {
+                        // 注册失败
+                        Snackbar snackbar = Snackbar.make(view, "Registration failed",
+                                Snackbar.LENGTH_LONG);
+                        View snackbarView = snackbar.getView();
+                        snackbarView.setBackgroundColor(getResources().getColor(R.color.red));
+                        snackbar.show();
+                    }
                 }
             }
         });
@@ -174,5 +238,28 @@ public class LoginActivity extends AppCompatActivity {
         alertDialog.show(); // 使用 alertDialog 显示对话框
     }
 
-
+    public boolean isValidUsername(String username) {
+        // 长度校验：3-20个字符
+        if (username == null || username.length() < 3 || username.length() > 20) {
+            return false;
+        }
+        
+        // 字符类型校验：只允许字母、数字和下划线
+        for (int i = 0; i < username.length(); i++) {
+            char c = username.charAt(i);
+            if (!Character.isLetterOrDigit(c) && c != '_') {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (sqLiteHelper != null) {
+            sqLiteHelper.close();
+        }
+    }
 }
