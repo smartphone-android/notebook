@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import hku.cs.notebook.bean.NotepadBean;
+import hku.cs.notebook.bean.UserBean;
+import hku.cs.notebook.bean.UserNoteBean;
 import hku.cs.notebook.utils.DBUtils;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -27,10 +29,42 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         db.execSQL("create table "+DBUtils.DATABASE_TABLE+"("+DBUtils.NOTEPAD_ID+
                 " integer primary key autoincrement,"+ DBUtils.NOTEPAD_CONTENT +
                 " text," + DBUtils.NOTEPAD_NAME+ " text," + DBUtils.NOTEPAD_TIME+ " text)");
+        
+        // 创建用户表
+        db.execSQL("create table "+DBUtils.USER_TABLE+"("+DBUtils.USER_ID+
+                " integer primary key autoincrement,"+ DBUtils.USERNAME +
+                " text," + DBUtils.PASSWORD+ " text," + DBUtils.FIRST_NAME+ " text," + 
+                DBUtils.LAST_NAME+ " text," + DBUtils.EMAIL+ " text)");
+        
+        // 创建用户-笔记关联表
+        db.execSQL("create table "+DBUtils.USER_NOTE_TABLE+"("+DBUtils.USER_NOTE_ID+
+                " integer primary key autoincrement,"+ DBUtils.USER_NOTE_USER_ID +
+                " integer," + DBUtils.USER_NOTE_NOTE_ID+ " integer," +
+                "FOREIGN KEY("+DBUtils.USER_NOTE_USER_ID+") REFERENCES "+DBUtils.USER_TABLE+"("+DBUtils.USER_ID+")," +
+                "FOREIGN KEY("+DBUtils.USER_NOTE_NOTE_ID+") REFERENCES "+DBUtils.DATABASE_TABLE+"("+DBUtils.NOTEPAD_ID+"))");
     }
+    
     @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
-    //添加数据
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // 处理数据库升级
+        if (oldVersion < 2) {
+            // 创建用户表
+            db.execSQL("create table "+DBUtils.USER_TABLE+"("+DBUtils.USER_ID+
+                    " integer primary key autoincrement,"+ DBUtils.USERNAME +
+                    " text," + DBUtils.PASSWORD+ " text," + DBUtils.FIRST_NAME+ " text," + 
+                    DBUtils.LAST_NAME+ " text," + DBUtils.EMAIL+ " text)");
+            
+            // 创建用户-笔记关联表
+            db.execSQL("create table "+DBUtils.USER_NOTE_TABLE+"("+DBUtils.USER_NOTE_ID+
+                    " integer primary key autoincrement,"+ DBUtils.USER_NOTE_USER_ID +
+                    " integer," + DBUtils.USER_NOTE_NOTE_ID+ " integer," +
+                    "FOREIGN KEY("+DBUtils.USER_NOTE_USER_ID+") REFERENCES "+DBUtils.USER_TABLE+"("+DBUtils.USER_ID+")," +
+                    "FOREIGN KEY("+DBUtils.USER_NOTE_NOTE_ID+") REFERENCES "+DBUtils.DATABASE_TABLE+"("+DBUtils.NOTEPAD_ID+"))");
+        }
+    }
+    
+    // 笔记相关方法
+    //添加笔记数据
     public boolean insertData(String noteContent,String noteName,String noteTime){
         ContentValues contentValues=new ContentValues();
         contentValues.put(DBUtils.NOTEPAD_CONTENT,noteContent);
@@ -39,14 +73,14 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return
                 sqLiteDatabase.insert(DBUtils.DATABASE_TABLE,null,contentValues)>0;
     }
-    //删除数据
+    //删除笔记数据
     public boolean deleteData(String id){
         String sql=DBUtils.NOTEPAD_ID+"=?";
         String[] contentValuesArray=new String[]{String.valueOf(id)};
         return
                 sqLiteDatabase.delete(DBUtils.DATABASE_TABLE,sql,contentValuesArray)>0;
     }
-    //修改数据
+    //修改笔记数据
     public boolean updateData(String id,String content,String name,String time){
         ContentValues contentValues=new ContentValues();
         contentValues.put(DBUtils.NOTEPAD_CONTENT,content);
@@ -57,7 +91,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         return
                 sqLiteDatabase.update(DBUtils.DATABASE_TABLE,contentValues,sql,strings)>0;
     }
-    //查询数据
+    //查询所有笔记数据
     public List<NotepadBean> query() {
         List<NotepadBean> list = new ArrayList<>();
         Cursor cursor = sqLiteDatabase.query(DBUtils.DATABASE_TABLE, null, null, null,
@@ -88,5 +122,251 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
         return list;
     }
+    
+    // 用户相关方法
+    // 添加用户
+    public boolean insertUser(String username, String password, String firstName, String lastName, String email) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBUtils.USERNAME, username);
+        contentValues.put(DBUtils.PASSWORD, password);
+        contentValues.put(DBUtils.FIRST_NAME, firstName);
+        contentValues.put(DBUtils.LAST_NAME, lastName);
+        contentValues.put(DBUtils.EMAIL, email);
+        return sqLiteDatabase.insert(DBUtils.USER_TABLE, null, contentValues) > 0;
+    }
+    
+    // 更新用户信息
+    public boolean updateUser(String userId, String username, String password, String firstName, String lastName, String email) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBUtils.USERNAME, username);
+        contentValues.put(DBUtils.PASSWORD, password);
+        contentValues.put(DBUtils.FIRST_NAME, firstName);
+        contentValues.put(DBUtils.LAST_NAME, lastName);
+        contentValues.put(DBUtils.EMAIL, email);
+        String sql = DBUtils.USER_ID + "=?";
+        String[] strings = new String[]{userId};
+        return sqLiteDatabase.update(DBUtils.USER_TABLE, contentValues, sql, strings) > 0;
+    }
+    
+    // 删除用户
+    public boolean deleteUser(String userId) {
+        String sql = DBUtils.USER_ID + "=?";
+        String[] contentValuesArray = new String[]{String.valueOf(userId)};
+        return sqLiteDatabase.delete(DBUtils.USER_TABLE, sql, contentValuesArray) > 0;
+    }
+    
+    // 查询所有用户
+    public List<UserBean> queryAllUsers() {
+        List<UserBean> list = new ArrayList<>();
+        Cursor cursor = sqLiteDatabase.query(DBUtils.USER_TABLE, null, null, null,
+                null, null, DBUtils.USER_ID + " DESC");
 
+        if (cursor != null) {
+            try {
+                int idIndex = cursor.getColumnIndexOrThrow(DBUtils.USER_ID);
+                int usernameIndex = cursor.getColumnIndexOrThrow(DBUtils.USERNAME);
+                int passwordIndex = cursor.getColumnIndexOrThrow(DBUtils.PASSWORD);
+                int firstNameIndex = cursor.getColumnIndexOrThrow(DBUtils.FIRST_NAME);
+                int lastNameIndex = cursor.getColumnIndexOrThrow(DBUtils.LAST_NAME);
+                int emailIndex = cursor.getColumnIndexOrThrow(DBUtils.EMAIL);
+
+                while (cursor.moveToNext()) {
+                    UserBean userInfo = new UserBean();
+                    userInfo.setUserId(String.valueOf(cursor.getInt(idIndex)));
+                    userInfo.setUsername(cursor.getString(usernameIndex));
+                    userInfo.setPassword(cursor.getString(passwordIndex));
+                    userInfo.setFirstName(cursor.getString(firstNameIndex));
+                    userInfo.setLastName(cursor.getString(lastNameIndex));
+                    userInfo.setEmail(cursor.getString(emailIndex));
+                    list.add(userInfo);
+                }
+            } catch (IllegalArgumentException e) {
+                Log.e("SQLiteHelper", "Column name not found in Cursor: " + e.getMessage());
+            } finally {
+                cursor.close();
+            }
+        }
+        return list;
+    }
+    
+    // 根据用户名查询用户
+    public UserBean queryUserByUsername(String username) {
+        UserBean userBean = null;
+        String sql = DBUtils.USERNAME + "=?";
+        String[] selectionArgs = new String[]{username};
+        Cursor cursor = sqLiteDatabase.query(DBUtils.USER_TABLE, null, sql, selectionArgs,
+                null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            try {
+                int idIndex = cursor.getColumnIndexOrThrow(DBUtils.USER_ID);
+                int usernameIndex = cursor.getColumnIndexOrThrow(DBUtils.USERNAME);
+                int passwordIndex = cursor.getColumnIndexOrThrow(DBUtils.PASSWORD);
+                int firstNameIndex = cursor.getColumnIndexOrThrow(DBUtils.FIRST_NAME);
+                int lastNameIndex = cursor.getColumnIndexOrThrow(DBUtils.LAST_NAME);
+                int emailIndex = cursor.getColumnIndexOrThrow(DBUtils.EMAIL);
+
+                userBean = new UserBean();
+                userBean.setUserId(String.valueOf(cursor.getInt(idIndex)));
+                userBean.setUsername(cursor.getString(usernameIndex));
+                userBean.setPassword(cursor.getString(passwordIndex));
+                userBean.setFirstName(cursor.getString(firstNameIndex));
+                userBean.setLastName(cursor.getString(lastNameIndex));
+                userBean.setEmail(cursor.getString(emailIndex));
+            } catch (IllegalArgumentException e) {
+                Log.e("SQLiteHelper", "Column name not found in Cursor: " + e.getMessage());
+            } finally {
+                cursor.close();
+            }
+        }
+        return userBean;
+    }
+    
+    // 根据用户ID查询用户
+    public UserBean queryUserById(String userId) {
+        UserBean userBean = null;
+        String sql = DBUtils.USER_ID + "=?";
+        String[] selectionArgs = new String[]{userId};
+        Cursor cursor = sqLiteDatabase.query(DBUtils.USER_TABLE, null, sql, selectionArgs,
+                null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            try {
+                int idIndex = cursor.getColumnIndexOrThrow(DBUtils.USER_ID);
+                int usernameIndex = cursor.getColumnIndexOrThrow(DBUtils.USERNAME);
+                int passwordIndex = cursor.getColumnIndexOrThrow(DBUtils.PASSWORD);
+                int firstNameIndex = cursor.getColumnIndexOrThrow(DBUtils.FIRST_NAME);
+                int lastNameIndex = cursor.getColumnIndexOrThrow(DBUtils.LAST_NAME);
+                int emailIndex = cursor.getColumnIndexOrThrow(DBUtils.EMAIL);
+
+                userBean = new UserBean();
+                userBean.setUserId(String.valueOf(cursor.getInt(idIndex)));
+                userBean.setUsername(cursor.getString(usernameIndex));
+                userBean.setPassword(cursor.getString(passwordIndex));
+                userBean.setFirstName(cursor.getString(firstNameIndex));
+                userBean.setLastName(cursor.getString(lastNameIndex));
+                userBean.setEmail(cursor.getString(emailIndex));
+            } catch (IllegalArgumentException e) {
+                Log.e("SQLiteHelper", "Column name not found in Cursor: " + e.getMessage());
+            } finally {
+                cursor.close();
+            }
+        }
+        return userBean;
+    }
+    
+    // 用户-笔记关联相关方法
+    // 添加用户-笔记关联
+    public boolean insertUserNote(String userId, String noteId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(DBUtils.USER_NOTE_USER_ID, userId);
+        contentValues.put(DBUtils.USER_NOTE_NOTE_ID, noteId);
+        return sqLiteDatabase.insert(DBUtils.USER_NOTE_TABLE, null, contentValues) > 0;
+    }
+    
+    // 删除用户-笔记关联
+    public boolean deleteUserNote(String userId, String noteId) {
+        String sql = DBUtils.USER_NOTE_USER_ID + "=? AND " + DBUtils.USER_NOTE_NOTE_ID + "=?";
+        String[] contentValuesArray = new String[]{userId, noteId};
+        return sqLiteDatabase.delete(DBUtils.USER_NOTE_TABLE, sql, contentValuesArray) > 0;
+    }
+    
+    // 查询用户的所有笔记ID
+    public List<String> queryUserNoteIds(String userId) {
+        List<String> noteIds = new ArrayList<>();
+        String sql = DBUtils.USER_NOTE_USER_ID + "=?";
+        String[] selectionArgs = new String[]{userId};
+        Cursor cursor = sqLiteDatabase.query(DBUtils.USER_NOTE_TABLE, null, sql, selectionArgs,
+                null, null, null);
+
+        if (cursor != null) {
+            try {
+                int noteIdIndex = cursor.getColumnIndexOrThrow(DBUtils.USER_NOTE_NOTE_ID);
+
+                while (cursor.moveToNext()) {
+                    noteIds.add(String.valueOf(cursor.getInt(noteIdIndex)));
+                }
+            } catch (IllegalArgumentException e) {
+                Log.e("SQLiteHelper", "Column name not found in Cursor: " + e.getMessage());
+            } finally {
+                cursor.close();
+            }
+        }
+        return noteIds;
+    }
+    
+    // 查询笔记的所有用户ID
+    public List<String> queryNoteUserIds(String noteId) {
+        List<String> userIds = new ArrayList<>();
+        String sql = DBUtils.USER_NOTE_NOTE_ID + "=?";
+        String[] selectionArgs = new String[]{noteId};
+        Cursor cursor = sqLiteDatabase.query(DBUtils.USER_NOTE_TABLE, null, sql, selectionArgs,
+                null, null, null);
+
+        if (cursor != null) {
+            try {
+                int userIdIndex = cursor.getColumnIndexOrThrow(DBUtils.USER_NOTE_USER_ID);
+
+                while (cursor.moveToNext()) {
+                    userIds.add(String.valueOf(cursor.getInt(userIdIndex)));
+                }
+            } catch (IllegalArgumentException e) {
+                Log.e("SQLiteHelper", "Column name not found in Cursor: " + e.getMessage());
+            } finally {
+                cursor.close();
+            }
+        }
+        return userIds;
+    }
+    
+    // 查询用户的所有笔记
+    public List<NotepadBean> queryUserNotes(String userId) {
+        List<NotepadBean> list = new ArrayList<>();
+        // 先查询用户关联的所有笔记ID
+        List<String> noteIds = queryUserNoteIds(userId);
+        
+        // 如果没有关联的笔记，直接返回空列表
+        if (noteIds.isEmpty()) {
+            return list;
+        }
+        
+        // 构建IN查询条件
+        StringBuilder selection = new StringBuilder(DBUtils.NOTEPAD_ID + " IN (");
+        String[] selectionArgs = new String[noteIds.size()];
+        for (int i = 0; i < noteIds.size(); i++) {
+            selection.append("?");
+            selectionArgs[i] = noteIds.get(i);
+            if (i < noteIds.size() - 1) {
+                selection.append(",");
+            }
+        }
+        selection.append(")");
+        
+        // 查询笔记
+        Cursor cursor = sqLiteDatabase.query(DBUtils.DATABASE_TABLE, null, selection.toString(), selectionArgs,
+                null, null, DBUtils.NOTEPAD_ID + " DESC");
+
+        if (cursor != null) {
+            try {
+                int idIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_ID);
+                int contentIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_CONTENT);
+                int nameIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_NAME);
+                int timeIndex = cursor.getColumnIndexOrThrow(DBUtils.NOTEPAD_TIME);
+
+                while (cursor.moveToNext()) {
+                    NotepadBean noteInfo = new NotepadBean();
+                    noteInfo.setId(String.valueOf(cursor.getInt(idIndex)));
+                    noteInfo.setNotepadContent(cursor.getString(contentIndex));
+                    noteInfo.setNotepadName(cursor.getString(nameIndex));
+                    noteInfo.setNotepadTime(cursor.getString(timeIndex));
+                    list.add(noteInfo);
+                }
+            } catch (IllegalArgumentException e) {
+                Log.e("SQLiteHelper", "Column name not found in Cursor: " + e.getMessage());
+            } finally {
+                cursor.close();
+            }
+        }
+        return list;
+    }
 }
