@@ -17,6 +17,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
 
 import hku.cs.notebook.databinding.ActivityMainBinding;
+import hku.cs.notebook.ui.agent.WebViewActivity;
+import hku.cs.notebook.ui.chat.ChatActivity;
 import hku.cs.notebook.ui.login.LoginActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,9 +41,12 @@ public class MainActivity extends AppCompatActivity {
         binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "search button", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
+//                Snackbar.make(view, "search button", Snackbar.LENGTH_LONG)
+//                        .setAction("Action", null)
+//                        .setAnchorView(R.id.fab).show();
+                //Intent intent = new Intent(MainActivity.this, WebViewActivity.class);
+                Intent intent = new Intent(MainActivity.this, ChatActivity.class);
+                startActivity(intent);
             }
         });
         DrawerLayout drawer = binding.drawerLayout;

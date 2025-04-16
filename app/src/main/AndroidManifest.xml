@@ -2,6 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -23,8 +26,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.editor.EditorActivity" />
         <activity android:name=".ui.login.LoginActivity" />
+        <activity android:name=".ui.chat.ChatActivity" />
+<!--        <activity-->
+<!--            android:name=".ui.agent.WebViewActivity"-->
+<!--            android:exported="false"-->
+<!--            android:launchMode="standard"-->
+<!--            android:label="@string/webview_title"-->
+<!--            android:parentActivityName=".MainActivity" />-->
     </application>
 
 </manifest>

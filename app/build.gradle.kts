@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
 android {
@@ -26,11 +27,15 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
+    }
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
@@ -43,9 +48,19 @@ dependencies {
     implementation(libs.lifecycle.viewmodel.ktx)
     implementation(libs.navigation.fragment)
     implementation(libs.navigation.ui)
+    implementation(libs.core.ktx)
+    implementation(libs.databinding.runtime)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
     implementation(libs.markwon.core)
     implementation(libs.markwon.editor)
+    debugImplementation(libs.leakcanary.android)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.okhttp)
+    implementation(libs.logging.interceptor)
+//    implementation(libs.tencentcloud.sdk.java.hunyuan)
+    implementation("com.tencentcloudapi:tencentcloud-sdk-java-hunyuan:3.1.1240")
+    implementation("com.tencentcloudapi:tencentcloud-sdk-java-common:3.1.1240")
 }

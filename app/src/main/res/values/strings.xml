@@ -42,4 +42,9 @@
     <string name="SignUp">Sign Up</string>
     <string name="registrationPage">Registration Page</string>
     <!-- login相关的结束-->
+
+    <!--AI-->
+    <string name="webview_title">DeepSeek AI</string>
+    <!--AI-->
+
 </resources>
