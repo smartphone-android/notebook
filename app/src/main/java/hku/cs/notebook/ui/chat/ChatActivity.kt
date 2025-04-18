@@ -3,53 +3,65 @@ package hku.cs.notebook.ui.chat
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import hku.cs.notebook.R
+import hku.cs.notebook.databinding.ActivityChatBinding
 
 class ChatActivity: AppCompatActivity() {
     private val viewModel: ChatViewModel by viewModels()
+    private lateinit var binding: ActivityChatBinding
+    private lateinit var chatAdapter: ChatAdapter
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_chat)
+        binding = ActivityChatBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         // 启用返回按钮
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        // 初始化UI组件
-        val etQuestion = findViewById<EditText>(R.id.etQuestion)
-        val btnSend = findViewById<Button>(R.id.btnSend)
-        val tvResult = findViewById<TextView>(R.id.tvResult)
+        // 设置RecyclerView和适配器
+        chatAdapter = ChatAdapter()
+        binding.rvChatMessages.apply {
+            layoutManager = LinearLayoutManager(this@ChatActivity).apply {
+                stackFromEnd = true  // 使新消息显示在底部
+            }
+            adapter = chatAdapter
+        }
 
         // 观察数据变化
-        viewModel.loading.observe(this) { isLoading ->
-            btnSend.isEnabled = !isLoading
-            if (isLoading) {
-                tvResult.text = "加载中..."
+        viewModel.messages.observe(this) { messages ->
+            chatAdapter.submitList(messages)
+            if (messages.isNotEmpty()) {
+                binding.rvChatMessages.smoothScrollToPosition(messages.size - 1)
             }
         }
 
-        viewModel.result.observe(this) { answer ->
-            tvResult.text = answer
+        // 观察加载状态
+        viewModel.loading.observe(this) { isLoading ->
+            binding.loadingIndicator.visibility = if (isLoading) View.VISIBLE else View.GONE
+            binding.btnSend.isEnabled = !isLoading
         }
 
         // 观察错误信息
         viewModel.error.observe(this) { errorMsg ->
-            if (errorMsg != null) {
-                tvResult.text = "出现错误：$errorMsg"
+            errorMsg?.let {
+                Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
             }
         }
 
-
-        // 按钮点击事件
-        btnSend.setOnClickListener {
-            val question = etQuestion.text.toString().trim()
+        // 发送按钮点击事件
+        binding.btnSend.setOnClickListener {
+            val question = binding.etQuestion.text.toString().trim()
             if (question.isNotEmpty()) {
                 viewModel.sendQuestion(question)
+                binding.etQuestion.setText("")  // 清空输入框
             }
         }
 

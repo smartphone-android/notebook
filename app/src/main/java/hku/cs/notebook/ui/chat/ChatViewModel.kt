@@ -15,8 +15,8 @@ import com.tencentcloudapi.hunyuan.v20230901.HunyuanClient
 import com.tencentcloudapi.hunyuan.v20230901.models.ChatCompletionsRequest
 import com.tencentcloudapi.hunyuan.v20230901.models.Message
 class ChatViewModel(application: Application): AndroidViewModel(application) {
-    private val _result = MutableLiveData<String>()
-    val result: LiveData<String> = _result
+    private val _messages = MutableLiveData<List<ChatMessage>>(emptyList())
+    val messages: LiveData<List<ChatMessage>> = _messages
 
     private val _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> = _loading
@@ -24,22 +24,34 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     private val _error = MutableLiveData<String?>()
     val error: MutableLiveData<String?> = _error
 
+    // 添加新消息
+    private fun addMessage(message: ChatMessage) {
+        val currentList = _messages.value ?: emptyList()
+        _messages.value = currentList + message
+    }
 
     // 发送请求
     fun sendQuestion(question: String) {
+        // 添加用户消息到聊天列表
+        addMessage(ChatMessage(content = question, isFromUser = true))
+
         viewModelScope.launch {
             try {
                 _loading.value = true
                 _error.value = null
 
                 val answer = withContext(Dispatchers.IO) {
-                    // 调用SDK进行请求
                     sendHunyuanRequest(question)
                 }
-                _result.value = answer
+
+                // 添加AI回复到聊天列表
+                addMessage(ChatMessage(content = answer, isFromUser = false))
             } catch (e: Exception) {
                 _error.value = "异常：${e.message}"
                 Log.e("ChatViewModel", "发生异常: ${e.stackTraceToString()}")
+
+                // 添加错误消息到聊天列表
+                addMessage(ChatMessage(content = "抱歉，出现了错误：${e.message}", isFromUser = false))
             } finally {
                 _loading.value = false
             }
@@ -49,8 +61,8 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     private fun sendHunyuanRequest(question: String): String {
         try {
             // 1. 实例化认证对象
-            val secretId = "替换为实际的SecretId"  //
-            val secretKey = "替换为实际的SecretKey"  //
+            val secretId = "替换为实际的SecretId"
+            val secretKey = "替换为实际的SecretKey"
             val cred = com.tencentcloudapi.common.Credential(secretId, secretKey)
 
             // 2. 配置网络设置
