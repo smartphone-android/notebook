@@ -5,16 +5,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
-            android:background="#fb7a6a"
+            android:background="?attr/colorPrimary"
             android:orientation="horizontal">
 
             <ImageView
@@ -41,51 +42,74 @@
             android:id="@+id/tv_time"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
             android:gravity="center"
-            android:visibility="gone"
-            android:textColor="#fb7a6a"/>
+            android:paddingTop="10dp"
 
-        <EditText
-            android:id="@+id/note_content"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:gravity="top"
-            android:hint="请输入要添加的内容"
-            android:paddingLeft="5dp"
-            android:textColor="@android:color/black"
-            android:background="#fefefe" />
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/rounded_corner"
+            android:orientation="vertical"
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/note_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_weight="1"
+                android:background="#EBE2FB"
+                android:gravity="top"
+                android:hint="Please enter here..."
+                android:textColor="@android:color/black" />
+
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="#fb7a6a"/>
+            android:background="#6200EE" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="10dp"
+            >
 
             <ImageView
                 android:id="@+id/delete"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_delete"
+                android:layout_weight="1"
+                android:paddingTop="9dp"
                 android:paddingBottom="15dp"
-                android:paddingTop="9dp"/>
+                android:layout_marginRight="5dp"
+                android:background="@drawable/rounded_corner"
+                android:src="@android:drawable/ic_menu_delete" />
 
             <ImageView
                 android:id="@+id/note_save"
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_save"
+                android:layout_weight="1"
+                android:paddingTop="9dp"
                 android:paddingBottom="15dp"
-                android:paddingTop="9dp"/>
+                android:background="@drawable/rounded_corner"
+                android:src="@android:drawable/ic_menu_save" />
         </LinearLayout>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

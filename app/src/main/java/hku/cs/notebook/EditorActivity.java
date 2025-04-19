@@ -38,12 +38,12 @@ public class EditorActivity extends Activity implements View.OnClickListener {
     }
     protected void initData() {
         mSQLiteHelper = new SQLiteHelper(this);
-        noteName.setText("添加记录");
+        noteName.setText("ADD NEW NOTE");
         Intent intent = getIntent();
         if(intent!= null){
             id = intent.getStringExtra("id");
             if (id != null){
-                noteName.setText("修改记录");
+                noteName.setText("UPDATE NOTE");
                 content.setText(intent.getStringExtra("content"));
                 note_time.setText(intent.getStringExtra("time"));
                 note_time.setVisibility(View.VISIBLE);
@@ -57,34 +57,45 @@ public class EditorActivity extends Activity implements View.OnClickListener {
         if (viewId == R.id.note_back) {
             finish();
         } else if (viewId == R.id.delete) {
-            content.setText(""); // Clear content
+
+            if (id != null) {
+                if (mSQLiteHelper.deleteData(id)) {
+                    showToast("Deleted");
+                    setResult(2); // 通知主界面刷新列表
+                    finish();     // 关闭当前页面
+                } else {
+                    showToast("Delete Failed");
+                }
+            } else {
+                showToast("Nothing to delete");
+            }
         } else if (viewId == R.id.note_save) {
             String noteContent = content.getText().toString().trim();
 
             if (noteContent.isEmpty()) {
-                showToast("内容不能为空!");
+                showToast("The content cannot be empty!");
                 return;
             }
 
             if (id != null) { // Update operation
                 if (mSQLiteHelper.updateData(id, noteContent, DBUtils.getTime())) {
-                    showToast("修改成功");
+                    showToast("Update Success");
                     setResult(2);
                     finish();
                 } else {
-                    showToast("修改失败");
+                    showToast("Update Failed");
                 }
             } else { // Insert new data
                 if (mSQLiteHelper.insertData(noteContent, DBUtils.getTime())) {
-                    showToast("保存成功");
+                    showToast("Saved");
                     setResult(2);
                     finish();
                 } else {
-                    showToast("保存失败");
+                    showToast("Failed to save");
                 }
             }
         } else {
-            showToast("未知操作!");
+            showToast("Unknown Operation!");
         }
     }
     public void showToast(String message){
