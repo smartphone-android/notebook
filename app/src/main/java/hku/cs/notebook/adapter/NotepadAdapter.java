@@ -1,6 +1,7 @@
 package hku.cs.notebook.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ public class NotepadAdapter extends BaseAdapter {
     public void updateData(List<NotepadBean> newList) {
         this.list = newList;
         notifyDataSetChanged();
+        Log.d("AdapterData", "Dataset size: " + newList.size());
     }
 
     @Override
@@ -43,6 +45,7 @@ public class NotepadAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        Log.d("Adapter", "Rendering item at position: " + position);
         ViewHolder viewHolder;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.list_item, null);

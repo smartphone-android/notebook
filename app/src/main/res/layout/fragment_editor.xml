@@ -91,16 +91,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="55dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:padding="8dp">
 
             <ImageView
                 android:id="@+id/delete"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_delete"
-                android:paddingBottom="15dp"
-                android:paddingTop="9dp" />
+                android:src="@android:drawable/ic_popup_sync"
+                android:paddingBottom="10dp"
+                android:paddingTop="9dp"
+                android:layout_marginEnd="2dp"
+                android:background="@drawable/rounded_background" />
 
             <ImageView
                 android:id="@+id/note_save"
@@ -108,8 +111,12 @@
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_menu_save"
-                android:paddingBottom="15dp"
-                android:paddingTop="9dp" />
+                android:paddingBottom="10dp"
+                android:paddingTop="9dp"
+                android:layout_marginStart="2dp"
+                android:background="@drawable/rounded_background" />
+
         </LinearLayout>
+
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

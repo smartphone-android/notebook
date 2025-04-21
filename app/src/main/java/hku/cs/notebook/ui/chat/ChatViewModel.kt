@@ -61,8 +61,8 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
     private fun sendHunyuanRequest(question: String): String {
         try {
             // 1. 实例化认证对象
-            val secretId = "替换为实际的SecretId"
-            val secretKey = "替换为实际的SecretKey"
+            val secretId = "1"  // 替换为实际的SecretId
+            val secretKey = "2"  // 替换为实际的SecretKey
             val cred = com.tencentcloudapi.common.Credential(secretId, secretKey)
 
             // 2. 配置网络设置

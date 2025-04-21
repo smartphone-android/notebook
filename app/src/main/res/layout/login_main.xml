@@ -31,7 +31,6 @@
             android:layout_weight="1.0"
             android:background="@drawable/btn_signup"
             android:text="@string/SignUp"
-            android:theme="@style/ButtonSignUp"
             app2:layout_constraintBottom_toBottomOf="parent"
             app2:layout_constraintEnd_toEndOf="parent"
             app2:layout_constraintStart_toEndOf="@id/login"
@@ -45,7 +44,6 @@
             android:layout_weight="1.0"
             android:background="@drawable/btn_login"
             android:text="@string/Login"
-            android:theme="@style/ButtonLogin"
             app2:layout_constraintBottom_toBottomOf="parent"
             app2:layout_constraintEnd_toStartOf="@id/signUp"
             app2:layout_constraintStart_toStartOf="parent"
@@ -64,19 +62,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <TextView
             android:id="@+id/logo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8.0dip"
-            android:layout_marginStart="8.0dip"
-            android:contentDescription="@string/Logo"
-            android:src="@drawable/logo"
+            android:text="@string/Logo"
+            android:textSize="48sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:shadowColor="#808080"
+            android:shadowDx="2"
+            android:shadowDy="2"
+            android:shadowRadius="2"
+            android:layout_marginTop="128dp"
+            android:layout_marginBottom="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/Constraint2"
@@ -165,6 +171,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/RememberMe"
+            android:textColor="@color/gray"
             app2:layout_constraintStart_toStartOf="parent"
             app2:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"

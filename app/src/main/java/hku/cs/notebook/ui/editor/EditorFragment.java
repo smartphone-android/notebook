@@ -1,5 +1,8 @@
 package hku.cs.notebook.ui.editor;
 
+import static android.content.Context.MODE_PRIVATE;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -111,6 +114,9 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
     private void saveContent() {
         String noteContent = content.getText().toString().trim();
         String noteName = notename.getText().toString().trim();
+        SharedPreferences prefs = requireActivity().getSharedPreferences("NotebookPrefs", MODE_PRIVATE);
+        String currentUserId = prefs.getString("userId", "-1"); // Default to "-1" if userId is not found
+
 
         if (noteContent.isEmpty()) {
             showToast(getString(R.string.empty_content_message)); // 使用资源中的消息
@@ -121,7 +127,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
             noteName = noteContent.length() > 10 ? noteContent.substring(0, 10) : noteContent;
         }
 
-        boolean success = viewModel.saveNote(noteContent, noteName);
+        boolean success = viewModel.saveNote(currentUserId, noteContent, noteName);
         if (success) {
             showToast(viewModel.hasId() ? getString(R.string.note_updated_message) : getString(R.string.note_saved_message));
             Navigation.findNavController(requireView()).navigateUp(); // 返回到列表页面

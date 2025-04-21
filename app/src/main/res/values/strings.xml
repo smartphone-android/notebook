@@ -27,21 +27,19 @@
     <string name="note_saved_message">Save successfully</string>
     <string name="name_hint">Note Name</string>
     <string name="search_desc">Search</string>
-
-    <!-- 以下是login相关的-->
+    <string name="log_out">Log Out</string>
     <string name="Username">Username</string>
     <string name="Password">Password</string>
     <string name="RememberMe">Remember Me</string>
     <string name="Login">Login</string>
     <string name="Register">Register</string>
-    <string name="Logo">Logo</string>
+    <string name="Logo">Android RUN !</string>
     <string name="FirstName">FirstName</string>
     <string name="LastName">LastName</string>
     <string name="Email">Email</string>
     <string name="ConfirmEmailAddress">Confirm Email Address</string>
     <string name="SignUp">Sign Up</string>
     <string name="registrationPage">Registration Page</string>
-    <!-- login相关的结束-->
 
     <!--AI-->
     <string name="webview_title">DeepSeek AI</string>

@@ -60,7 +60,6 @@ dependencies {
     implementation(libs.converter.gson)
     implementation(libs.okhttp)
     implementation(libs.logging.interceptor)
-//    implementation(libs.tencentcloud.sdk.java.hunyuan)
     implementation("com.tencentcloudapi:tencentcloud-sdk-java-hunyuan:3.1.1240")
     implementation("com.tencentcloudapi:tencentcloud-sdk-java-common:3.1.1240")
 }

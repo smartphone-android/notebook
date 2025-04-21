@@ -1,15 +1,15 @@
 package hku.cs.notebook.bean;
 
 public class NotepadBean {
-    private String id;
+    private String noteId;
     private String notepadName;
     private String notepadContent;
     private String notepadTime;
-    public String getId() {
-        return id;
+    public String getNoteId() {
+        return noteId;
     }
-    public void setId(String id) {
-        this.id = id;
+    public void setNoteId(String noteId) {
+        this.noteId = noteId;
     }
     public String getNotepadName() {
         return notepadName;

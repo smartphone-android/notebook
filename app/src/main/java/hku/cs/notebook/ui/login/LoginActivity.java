@@ -2,12 +2,14 @@ package hku.cs.notebook.ui.login;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,12 +24,15 @@ import hku.cs.notebook.database.SQLiteHelper;
 public class LoginActivity extends AppCompatActivity {
 
 
-    EditText username, password, reg_username, reg_password,
-            reg_firstName, reg_lastName, reg_email, reg_confirmemail;
+    EditText username, password, reg_username, reg_password, reg_email;
     Button login, signUp, reg_register;
     TextInputLayout txtInLayoutUsername, txtInLayoutPassword, txtInLayoutRegPassword;
     CheckBox rememberMe;
-    
+
+    private static final String PREF_NAME = "NotebookPrefs";
+    private static final String KEY_USER_ID = "userId";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_USEREMAIL = "userEmail";
     private SQLiteHelper sqLiteHelper;
 
     @Override
@@ -114,10 +119,27 @@ public class LoginActivity extends AppCompatActivity {
                     if (userBean != null) {
                         // 登录成功
                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                        // 可以将用户信息传递给MainActivity
+
+                        Toast.makeText(LoginActivity.this, "Information saved successfully!", Toast.LENGTH_SHORT).show();
+
                         intent.putExtra("userId", userBean.getUserId());
                         intent.putExtra("username", userBean.getUsername());
+                        intent.putExtra("userEmail", userBean.getEmail());
+
+                        String userId = userBean.getUserId();
+                        String username = userBean.getUsername();
+                        String userEmail = userBean.getEmail();
+
+                        // 保存用户信息到SharedPreferences
+                        SharedPreferences prefs = getSharedPreferences(PREF_NAME, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        editor.putString(KEY_USER_ID, userId);
+                        editor.putString(KEY_USERNAME, username);
+                        editor.putString(KEY_USEREMAIL, userEmail);
+                        editor.apply();
+
                         setResult(RESULT_OK, intent);
+
                         finish(); // 结束登录活动
                     } else {
                         // 登录失败
@@ -144,10 +166,7 @@ public class LoginActivity extends AppCompatActivity {
 
         reg_username = dialogView.findViewById(R.id.reg_username);
         reg_password = dialogView.findViewById(R.id.reg_password);
-        reg_firstName = dialogView.findViewById(R.id.reg_firstName);
-        reg_lastName = dialogView.findViewById(R.id.reg_lastName);
         reg_email = dialogView.findViewById(R.id.reg_email);
-        reg_confirmemail = dialogView.findViewById(R.id.reg_confirmemail);
         reg_register = dialogView.findViewById(R.id.reg_register);
         txtInLayoutRegPassword = dialogView.findViewById(R.id.txtInLayoutRegPassword);
 
@@ -177,43 +196,19 @@ public class LoginActivity extends AppCompatActivity {
                     txtInLayoutRegPassword.setPasswordVisibilityToggleEnabled(false);
                     //Here you can write the codes for checking password
                 }
-                if (reg_firstName.getText().toString().trim().isEmpty()) {
-                    isValid = false;
-                    reg_firstName.setError("Please fill out this field");
-                } else {
-                    //Here you can write the codes for checking firstname
-
-                }
-                if (reg_lastName.getText().toString().trim().isEmpty()) {
-                    isValid = false;
-                    reg_lastName.setError("Please fill out this field");
-                } else {
-                    //Here you can write the codes for checking lastname
-                }
                 if (reg_email.getText().toString().trim().isEmpty()) {
                     isValid = false;
                     reg_email.setError("Please fill out this field");
                 } else {
                     //Here you can write the codes for checking email
                 }
-                if (reg_confirmemail.getText().toString().trim().isEmpty()) {
-                    isValid = false;
-                    reg_confirmemail.setError("Please fill out this field");
-                } else if (!reg_email.getText().toString().trim().equals(reg_confirmemail.getText().toString().trim())) {
-                    isValid = false;
-                    reg_confirmemail.setError("Email does not match");
-                } else {
-                    //Here you can write the codes for checking confirmemail
-                }
                 if(isValid) {
                     // 注册新用户
                     String newUsername = reg_username.getText().toString().trim();
                     String newPassword = reg_password.getText().toString().trim();
-                    String firstName = reg_firstName.getText().toString().trim();
-                    String lastName = reg_lastName.getText().toString().trim();
                     String email = reg_email.getText().toString().trim();
                     
-                    boolean success = sqLiteHelper.insertUser(newUsername, newPassword, firstName, lastName, email);
+                    boolean success = sqLiteHelper.insertUser(newUsername, newPassword, email);
                     
                     if (success) {
                         // 注册成功
