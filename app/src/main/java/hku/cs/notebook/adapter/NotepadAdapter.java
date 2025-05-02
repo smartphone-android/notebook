@@ -45,7 +45,7 @@ public class NotepadAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Log.d("Adapter", "Rendering item at position: " + position);
+//        Log.d("Adapter", "Rendering item at position: " + position);
         ViewHolder viewHolder;
         if (convertView == null) {
             convertView = layoutInflater.inflate(R.layout.list_item, null);

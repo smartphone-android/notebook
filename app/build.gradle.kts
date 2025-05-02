@@ -40,7 +40,6 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
@@ -55,6 +54,9 @@ dependencies {
     androidTestImplementation(libs.espresso.core)
     implementation(libs.markwon.core)
     implementation(libs.markwon.editor)
+    implementation(libs.markwon.latex)
+    implementation(libs.markwon.images)
+    implementation(libs.markwon.html)
     debugImplementation(libs.leakcanary.android)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)

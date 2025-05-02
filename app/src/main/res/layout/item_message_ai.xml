@@ -22,6 +22,15 @@
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="这是AI的回答" />
+        tools:text="这是AI的回答test" />
+
+    <ImageView
+        android:id="@+id/copyButton"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:src="@android:drawable/btn_star"
+        app:layout_constraintBottom_toBottomOf="@id/tvAiMessage"
+        app:layout_constraintStart_toEndOf="@id/tvAiMessage" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,6 +1,6 @@
 [versions]
 agp = "8.8.1"
-gradle = "8.8.2"
+gradle = "8.6.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -12,6 +12,8 @@ lifecycleViewmodelKtx = "2.8.7"
 navigationFragment = "2.8.9"
 navigationUi = "2.8.9"
 markwon = "4.6.2"
+
+
 
 [libraries]
 core-ktx = "androidx.core:core-ktx:1.16.0"
@@ -35,6 +37,10 @@ navigation-fragment = { group = "androidx.navigation", name = "navigation-fragme
 navigation-ui = { group = "androidx.navigation", name = "navigation-ui", version.ref = "navigationUi" }
 markwon-core = { group = "io.noties.markwon", name = "core", version.ref = "markwon" }
 markwon-editor = { group = "io.noties.markwon", name = "editor", version.ref = "markwon" }
+markwon-latex = { group = "io.noties.markwon", name = "ext-latex", version.ref = "markwon" }
+markwon-images = { group = "io.noties.markwon", name = "image", version.ref = "markwon" }
+markwon-html = { group = "io.noties.markwon", name = "html", version.ref = "markwon" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.0.2" }

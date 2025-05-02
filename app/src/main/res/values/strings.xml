@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">notebook</string>
+    <string name="app_name">Android RUN !</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Android Studio</string>
@@ -43,6 +43,7 @@
 
     <!--AI-->
     <string name="webview_title">DeepSeek AI</string>
+    <string name="chat_hint">Message</string>
     <!--AI-->
 
 </resources>

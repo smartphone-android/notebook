@@ -129,17 +129,17 @@ public class NoteListFragment extends Fragment {
         // Fetch user-specific notes using SQLiteHelper
         list = mSQLiteHelper.queryUserNotes(currentUserId);
 
-        // Log the content of the list
-        if (list != null && !list.isEmpty()) {
-            for (NotepadBean note : list) {
-                Log.d("SQL_Result", "Note ID: " + note.getNoteId() +
-                        ", Name: " + note.getNotepadName() +
-                        ", Content: " + note.getNotepadContent() +
-                        ", Time: " + note.getNotepadTime());
-            }
-        } else {
-            Log.d("SQL_Result", "The query returned an empty or null list.");
-        }
+//        // Log the content of the list
+//        if (list != null && !list.isEmpty()) {
+//            for (NotepadBean note : list) {
+//                Log.d("SQL_Result", "Note ID: " + note.getNoteId() +
+//                        ", Name: " + note.getNotepadName() +
+//                        ", Content: " + note.getNotepadContent() +
+//                        ", Time: " + note.getNotepadTime());
+//            }
+//        } else {
+//            Log.d("SQL_Result", "The query returned an empty or null list.");
+//        }
 
 
         adapter = new NotepadAdapter(getActivity(), list);

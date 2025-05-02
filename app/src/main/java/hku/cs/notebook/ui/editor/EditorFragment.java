@@ -19,8 +19,13 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.latex.JLatexMathPlugin;
 import io.noties.markwon.editor.MarkwonEditor;
 import io.noties.markwon.editor.MarkwonEditorTextWatcher;
+import io.noties.markwon.inlineparser.MarkwonInlineParserPlugin;
+import io.noties.markwon.image.ImagesPlugin;
+import io.noties.markwon.html.HtmlPlugin;
+
 
 import hku.cs.notebook.R;
 import hku.cs.notebook.database.SQLiteHelper;
@@ -64,7 +69,15 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
         noteSave = view.findViewById(R.id.note_save);
 
         // 初始化 Markwon
-        markwon = Markwon.create(requireContext());
+        markwon = Markwon.builder(requireContext())
+                .usePlugin(ImagesPlugin.create())
+                .usePlugin(HtmlPlugin.create())
+                .usePlugin(MarkwonInlineParserPlugin.create())
+                .usePlugin(JLatexMathPlugin.create(content.getTextSize(), builder -> {
+                    builder.inlinesEnabled(true);
+                }))
+                .build();
+
         editor = MarkwonEditor.create(markwon);
 
         content.addTextChangedListener(MarkwonEditorTextWatcher.withProcess(editor));
@@ -124,7 +137,7 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
         }
 
         if (noteName.isEmpty()){
-            noteName = noteContent.length() > 10 ? noteContent.substring(0, 10) : noteContent;
+            noteName = noteContent.length() > 20 ? noteContent.substring(0, 20) : noteContent;
         }
 
         boolean success = viewModel.saveNote(currentUserId, noteContent, noteName);
@@ -140,15 +153,13 @@ public class EditorFragment extends Fragment implements View.OnClickListener {
         isPreviewMode = previewMode;
 
         if (isPreviewMode) {
-            // 切换到预览模式
             content.setVisibility(View.GONE);
             previewContainer.setVisibility(View.VISIBLE);
 
-            // 渲染 Markdown 到 TextView
+            // 渲染 Markdown 和 LaTeX
             String markdownText = content.getText().toString();
             markwon.setMarkdown(mdPreview, markdownText);
         } else {
-            // 切换到代码模式
             content.setVisibility(View.VISIBLE);
             previewContainer.setVisibility(View.GONE);
         }

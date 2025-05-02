@@ -62,7 +62,7 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
         try {
             // 1. 实例化认证对象
             val secretId = "1"  // 替换为实际的SecretId
-            val secretKey = "2"  // 替换为实际的SecretKey
+            val secretKey = "1"  // 替换为实际的SecretKey
             val cred = com.tencentcloudapi.common.Credential(secretId, secretKey)
 
             // 2. 配置网络设置
@@ -76,26 +76,39 @@ class ChatViewModel(application: Application): AndroidViewModel(application) {
             // 4. 创建客户端
             val client = HunyuanClient(cred, "", clientProfile)
 
-            // 5. 构建请求
-            val req = ChatCompletionsRequest()
-            req.model = "hunyuan-lite"  // 或hunyuan-turbo
-            req.stream = false
-            // 6. 设置消息
-            val message = Message()
-            message.role = "user"
-            message.content = question
-            req.messages = arrayOf(message)
+            // 4. 设置预设系统 Prompt
+            val systemMessage = Message().apply {
+                role = "system"
+                content = "你是一位专业的 AI 助手，部署于名叫\"Android Run !\"的笔记本应用上。请用标准markdown格式为用户回答问题或帮助写作，用#区分各级标题。"
+            }
+
+            // 5. 构建用户消息
+            val userMessage = Message().apply {
+                role = "user"
+                content = question
+            }
+
+            // 6. 构建请求
+            val req = ChatCompletionsRequest().apply {
+                model = "hunyuan-lite"
+                stream = false
+                messages = arrayOf(systemMessage, userMessage)
+            }
 
             // 7. 发送请求
             val resp = client.ChatCompletions(req)
 
             // 8. 处理响应
-            val content = resp.choices[0].message.content
+            val content = resp.choices.getOrNull(0)?.message?.content ?: "AI未返回有效回答，请稍后再试。"
+
+            // 9. 记录日志
+            Log.d("ChatViewModel", "用户输入: $question")
+            Log.d("ChatViewModel", "AI 回答: $content")
 
             return content
         } catch (e: Exception) {
             Log.e("ChatViewModel", "SDK调用异常：${e.message}")
-            throw e
+            return "出现错误: ${e.message}"
         }
     }
 

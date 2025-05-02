@@ -1,17 +1,12 @@
 package hku.cs.notebook.ui.chat
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import hku.cs.notebook.R
 import hku.cs.notebook.databinding.ActivityChatBinding
 
 class ChatActivity: AppCompatActivity() {
@@ -23,6 +18,7 @@ class ChatActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         // 启用返回按钮
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -64,9 +60,8 @@ class ChatActivity: AppCompatActivity() {
                 binding.etQuestion.setText("")  // 清空输入框
             }
         }
-
-
     }
+
     // 处理返回按钮点击事件
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {

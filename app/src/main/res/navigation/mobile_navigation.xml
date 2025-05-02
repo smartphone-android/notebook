@@ -17,10 +17,6 @@
             app:destination="@id/editorFragment" />
     </fragment>
 
-    <!-- GalleryFragment -->
-
-    <!-- SlideshowFragment -->
-
     <!-- EditorFragment -->
     <fragment
         android:id="@+id/editorFragment"

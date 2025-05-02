@@ -21,6 +21,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     //创建数据库
     public SQLiteHelper(Context context){
         super(context, DBUtils.DATABASE_NAME, null, DBUtils.DATABASE_VERION);//调用了DBUtils类，得到数据库名Notepad
+        Log.d("SQLiteHelper", "context: " + context);
         sqLiteDatabase = this.getWritableDatabase();
     }
     //创建表，用execSQL()方法创建一个数据表，列名分别为ID、CONTENT、TIME
@@ -365,7 +366,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
                 while (cursor.moveToNext()) {
                     String noteId = String.valueOf(cursor.getInt(noteIdIndex));
-                    Log.d("Debug_NoteId", "Fetched Note ID: " + noteId); // 打印获取的笔记ID
+//                    Log.d("Debug_NoteId", "Fetched Note ID: " + noteId); // 打印获取的笔记ID
                     noteIds.add(noteId);
                 }
             } catch (IllegalArgumentException e) {
@@ -457,10 +458,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                     noteInfo.setNotepadName(cursor.getString(nameIndex));
                     noteInfo.setNotepadTime(cursor.getString(timeIndex));
 
-                    Log.d("Debug_NoteInfo", "Note: ID=" + noteInfo.getNoteId() +
-                            ", Content=" + noteInfo.getNotepadContent() +
-                            ", Name=" + noteInfo.getNotepadName() +
-                            ", Time=" + noteInfo.getNotepadTime());
+//                    Log.d("Debug_NoteInfo", "Note: ID=" + noteInfo.getNoteId() +
+//                            ", Content=" + noteInfo.getNotepadContent() +
+//                            ", Name=" + noteInfo.getNotepadName() +
+//                            ", Time=" + noteInfo.getNotepadTime());
 
                     list.add(noteInfo);
                 }
